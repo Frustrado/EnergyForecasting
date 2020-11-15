@@ -4,7 +4,7 @@ from numpy import concatenate
 from sklearn.metrics import explained_variance_score,max_error,mean_absolute_error,mean_squared_error,mean_squared_log_error,median_absolute_error,r2_score
 
 from Configuration import configuration, default_config
-from Models import lstm_model, rnn_model, cnn_model, mlp_model
+from Models import lstm_model, rnn_model, cnn_model, mlp_model, conv2d_model
 from datetime import datetime
 from math import sqrt
 
@@ -78,14 +78,25 @@ def measure_error(actual, predicted):
             'R2': r2_score(actual, predicted)}
 
 def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
+    if (model._name.split("-")[0] == 'conv2d'):
+        train_X = train_X.reshape(train_X.shape[0],train_X.shape[1], 1,train_X.shape[2], 1)
+        test_X = test_X.reshape(test_X.shape[0],test_X.shape[1],1, test_X.shape[2], 1)
+
     model.fit(train_X, train_y,epochs=cfg.get('n_epochs'),batch_size=cfg.get('n_batch'),validation_split=0.1,verbose=1,shuffle=False)
     train_predict = model.predict(train_X)
     test_predict = model.predict(test_X)
+
+    if(model._name.split("-")[0] == 'conv2d'):
+        train_X = train_X.reshape(train_X.shape[0],train_X.shape[1],train_X.shape[3])
+        test_X = test_X.reshape(test_X.shape[0], test_X.shape[1], test_X.shape[3])
 
     #reshape for multilayer perceptron
     if(model._name.split("-")[0]=='mlp'):
         train_predict = train_predict.reshape(train_predict.shape[0],train_predict.shape[1])
         test_predict = test_predict.reshape(test_predict.shape[0],test_predict.shape[1])
+    # if(model._name.split("-")[0]=='conv2d'):
+    #     train_predict = train_predict.reshape(train_predict.shape[0], train_predict.shape[1],1,1)
+    #     test_predict = test_predict.reshape(test_predict.shape[0], test_predict.shape[1],1,1)
 
     inv_test_y, inv_test_predict = convert_data(train_X,test_X,train_y,test_y,train_predict,test_predict,scaler)
     measure = measure_error(inv_test_y, inv_test_predict)
@@ -98,13 +109,15 @@ def run(train_X, train_y, test_X, test_y, scaler):
     # models_list.append(lstm_model)
     # models_list.append(rnn_model)
     # models_list.append(cnn_model)
-    models_list.append(mlp_model)
+    # models_list.append(mlp_model)
+    models_list.append(conv2d_model)
 
     config_list = []
     # config_list.append(configuration('lstm', default_config()))
     # config_list.append(configuration('rnn', default_config()))
     # config_list.append(configuration('cnn', default_config()))
-    config_list.append(configuration('mlp', default_config()))
+    # config_list.append(configuration('mlp', default_config()))
+    config_list.append(configuration('conv2d', default_config()))
 
     array_of_results = []
     results = {}
