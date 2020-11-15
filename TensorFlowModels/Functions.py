@@ -4,7 +4,7 @@ from numpy import concatenate
 from sklearn.metrics import explained_variance_score,max_error,mean_absolute_error,mean_squared_error,mean_squared_log_error,median_absolute_error,r2_score
 
 from Configuration import configuration, default_config
-from Models import lstm_model, rnn_model
+from Models import lstm_model, rnn_model, cnn_model, mlp_model
 from datetime import datetime
 from math import sqrt
 
@@ -37,7 +37,8 @@ def prepare_data():
 def convert_data(train_X,test_X,train_y,test_y,train_predict,test_predict,scaler):
     train_X = train_X.reshape((train_X.shape[0], train_X.shape[2]))
     test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-
+    # print(train_predict.shape)
+    # print(train_X.shape)
     inv_train_predict = concatenate((train_predict, train_X), axis=1)
     inv_test_predict = concatenate((test_predict, test_X), axis=1)
 
@@ -80,6 +81,12 @@ def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
     model.fit(train_X, train_y,epochs=cfg.get('n_epochs'),batch_size=cfg.get('n_batch'),validation_split=0.1,verbose=1,shuffle=False)
     train_predict = model.predict(train_X)
     test_predict = model.predict(test_X)
+
+    #reshape for multilayer perceptron
+    if(model._name.split("-")[0]=='mlp'):
+        train_predict = train_predict.reshape(train_predict.shape[0],train_predict.shape[1])
+        test_predict = test_predict.reshape(test_predict.shape[0],test_predict.shape[1])
+
     inv_test_y, inv_test_predict = convert_data(train_X,test_X,train_y,test_y,train_predict,test_predict,scaler)
     measure = measure_error(inv_test_y, inv_test_predict)
     measure['Model']=model.name
@@ -88,12 +95,16 @@ def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
 
 def run(train_X, train_y, test_X, test_y, scaler):
     models_list = []
-    models_list.append(lstm_model)
-    models_list.append(rnn_model)
+    # models_list.append(lstm_model)
+    # models_list.append(rnn_model)
+    # models_list.append(cnn_model)
+    models_list.append(mlp_model)
 
     config_list = []
-    config_list.append(configuration('lstm', default_config()))
-    config_list.append(configuration('rnn', default_config()))
+    # config_list.append(configuration('lstm', default_config()))
+    # config_list.append(configuration('rnn', default_config()))
+    # config_list.append(configuration('cnn', default_config()))
+    config_list.append(configuration('mlp', default_config()))
 
     array_of_results = []
     results = {}
@@ -102,6 +113,7 @@ def run(train_X, train_y, test_X, test_y, scaler):
     for def_model, def_cfg in zip(models_list, config_list):
         for cfg in def_cfg:
             model = def_model(cfg,train_X.shape[1], train_X.shape[2])
+            print(model)
             model._name = str(def_model.__name__.split("_")[0] + "-" + str(i))
             i += 1
             array_of_models.append(model)
