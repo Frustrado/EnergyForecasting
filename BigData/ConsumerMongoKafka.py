@@ -12,7 +12,7 @@ consumer = KafkaConsumer(
 
 print(consumer)
 client = MongoClient('localhost:27017')
-collection = client.numtest.kafka
+collection = client.numtest.test6
 # consumer.subscribe(['numtest'])
 for message in consumer:
     message = message.value

@@ -3,9 +3,7 @@ from pyspark.sql import SparkSession
 from json import dump
 import json
 
-
 client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
-
 
 # spark = SparkSession \
 #     .builder \
