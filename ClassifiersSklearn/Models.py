@@ -142,11 +142,11 @@ def configuration():
 
     array_of_configs.append(svc)
     array_of_configs.append(xgbost)
-    array_of_configs.append(rf)
-    array_of_configs.append(sgd)
-    array_of_configs.append(bnb)
-    array_of_configs.append(mlp)
-    array_of_configs.append(lsvc)
+    # array_of_configs.append(rf)
+    # array_of_configs.append(sgd)
+    # array_of_configs.append(bnb)
+    # array_of_configs.append(mlp)
+    # array_of_configs.append(lsvc)
     #     array_of_configs.append(sc)
 
     return array_of_configs
@@ -155,12 +155,12 @@ def configuration():
 def models():
     array_of_models = []
     array_of_models.append(SVC())
-    array_of_models.append(GradientBoostingClassifier())
-    array_of_models.append(RandomForestClassifier())
-    array_of_models.append(SGDClassifier())
-    array_of_models.append(BernoulliNB())
-    array_of_models.append(MLPClassifier())
-    array_of_models.append(LinearSVC())
+    # array_of_models.append(GradientBoostingClassifier())
+    # array_of_models.append(RandomForestClassifier())
+    # array_of_models.append(SGDClassifier())
+    # array_of_models.append(BernoulliNB())
+    # array_of_models.append(MLPClassifier())
+    # array_of_models.append(LinearSVC())
     #     array_of_models.append(StackingClassifier())
 
     return array_of_models

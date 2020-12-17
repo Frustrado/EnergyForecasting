@@ -6,7 +6,7 @@ from datetime import datetime
 
 from sklearn.metrics import accuracy_score, f1_score, auc, average_precision_score, roc_auc_score,roc_curve
 from sklearn.preprocessing import StandardScaler
-
+import numpy as np
 
 def gini_normalized(y_actual, y_pred):
     gini = lambda a, p: 2 * roc_auc_score(a, p) - 1
@@ -24,8 +24,8 @@ def measure_error(actual, predicted):
 
 
 def prepare_data(data):
-    X, y = data[:, :14], data[:, 14]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0, stratify=y)
+    X, y = data[:532, 1:28], data[:532, 28]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)#, stratify=y)
 
     sc = StandardScaler()
     sc.fit(X_train)
@@ -41,12 +41,16 @@ def initial_run(data, config, models):
     X_train_std,X_test_std,y_train,y_test=data
 
     for c, m in zip(config, models):
-        clf = GridSearchCV(m, c)
+        clf = GridSearchCV(m, c, cv=3)
+        y_train = y_train.astype('int')
+        print('elo')
         clf.fit(X_train_std, y_train)
         #         print(clf.estimator)
 
         if (df.size < 1):
-            df = pd.DataFrame(measure_error(y_test, clf.predict(X_test_std)))
+
+            df = pd.DataFrame(measure_error(y_test.tolist(), clf.predict(X_test_std).tolist()))
+            # df = pd.DataFrame(measure_error(y_test, clf.predict(X_test_std)))
             df['model'] = str(m) + "-" + str(1)
             list_of_models[str(m) + "-" + str(1)] = clf
             df['date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
