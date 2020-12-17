@@ -9,17 +9,19 @@ from datetime import datetime
 from math import sqrt
 
 def prepare_data():
-    data = pd.read_csv("city_day.csv")
+    data = pd.read_csv("dfValidation.csv")
+    # data = pd.read_csv("city_day.csv")
+    # data['Date'] = data['Date'].apply(pd.to_datetime)
+    # data.set_index('Date', inplace=True)
+    #
+    # df = data.loc[data['City'] == 'Delhi']
+    # df.isnull().sum()
+    #
+    # df = df.drop(columns=['City', 'AQI_Bucket', 'Xylene'])
+    #
+    # df = df.fillna(df.mean())
 
-    data['Date'] = data['Date'].apply(pd.to_datetime)
-    data.set_index('Date', inplace=True)
-
-    df = data.loc[data['City'] == 'Delhi']
-    df.isnull().sum()
-
-    df = df.drop(columns=['City', 'AQI_Bucket', 'Xylene'])
-
-    df = df.fillna(df.mean())
+    df = data.iloc[:1000, 1:]
 
     dataset = df.values
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -27,8 +29,12 @@ def prepare_data():
     train_size = int(len(dataset) * 0.80)
     test_size = len(dataset) - train_size
     train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
-    train_X, train_y = train[:, :-1], train[:, -1]
-    test_X, test_y = test[:, :-1], test[:, -1]
+    train_X, train_y = train[:, 1:], train[:, 0]
+    test_X, test_y = test[:, 1:], test[:, 0]
+    # train_X, train_y = train[:, :-1], train[:, -1]
+    print(train_X)
+    print(train_y)
+    # test_X, test_y = test[:, :-1], test[:, -1]
     train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
     test_X = test_X.reshape((test_X.shape[0], 1, test_X.shape[1]))
     return train_X, train_y, test_X, test_y, scaler
@@ -81,7 +87,8 @@ def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
     if (model._name.split("-")[0] == 'conv2d'):
         train_X = train_X.reshape(train_X.shape[0],train_X.shape[1], 1,train_X.shape[2], 1)
         test_X = test_X.reshape(test_X.shape[0],test_X.shape[1],1, test_X.shape[2], 1)
-
+    # print(train_X)
+    # print(train_y)
     model.fit(train_X, train_y,epochs=cfg.get('n_epochs'),batch_size=cfg.get('n_batch'),validation_split=0.1,verbose=1,shuffle=False)
     train_predict = model.predict(train_X)
     test_predict = model.predict(test_X)
@@ -107,17 +114,17 @@ def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
 def run(train_X, train_y, test_X, test_y, scaler):
     models_list = []
     # models_list.append(lstm_model)
-    # models_list.append(rnn_model)
+    models_list.append(rnn_model)
     # models_list.append(cnn_model)
     # models_list.append(mlp_model)
-    models_list.append(conv2d_model)
+    # models_list.append(conv2d_model)
 
     config_list = []
     # config_list.append(configuration('lstm', default_config()))
-    # config_list.append(configuration('rnn', default_config()))
+    config_list.append(configuration('rnn', default_config()))
     # config_list.append(configuration('cnn', default_config()))
     # config_list.append(configuration('mlp', default_config()))
-    config_list.append(configuration('conv2d', default_config()))
+    # config_list.append(configuration('conv2d', default_config()))
 
     array_of_results = []
     results = {}
