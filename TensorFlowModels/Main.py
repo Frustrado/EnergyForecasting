@@ -1,8 +1,10 @@
-from Functions import prepare_data, run, convert_config_to_datframes, get_config, run_model
+from Functions import prepare_data, run, convert_config_to_datframes, get_config, run_model, get_min_model, get_model
 
 train_X, train_y, test_X, test_y, scaler = prepare_data()
 
 models, df_results = run(train_X, train_y, test_X, test_y, scaler)
+print(df_results)
+print(get_model(models, get_min_model(df_results).values[0]).get_config())
 
 convert_config_to_datframes(get_config(models))[0]
 #

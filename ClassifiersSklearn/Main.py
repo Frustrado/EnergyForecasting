@@ -8,9 +8,12 @@ from sklearn.svm import SVC
 import warnings
 warnings.filterwarnings('ignore')
 
-series = pd.read_csv('dfValidation.csv', header=0)
-series.iloc[:,1:] = series.iloc[:,1:].astype('float')
-series['value'] = np.random.randint(0, 2, series.shape[0])
+# series = pd.read_csv('dfValidation.csv', header=0)
+# series.iloc[:,1:] = series.iloc[:,1:].astype('float')
+# series['value'] = np.random.randint(0, 2, series.shape[0])
+series = pd.read_csv('german.uci.csv', header=0)
+
+
 data = series.values
 data = prepare_data(data)
 

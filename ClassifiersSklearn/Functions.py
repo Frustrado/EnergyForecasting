@@ -1,11 +1,13 @@
 import json
 
 from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.calibration import CalibratedClassifierCV
 import pandas as pd
 from datetime import datetime
 
 from sklearn.metrics import accuracy_score, f1_score, auc, average_precision_score, roc_auc_score,roc_curve
 from sklearn.preprocessing import StandardScaler
+import time
 import numpy as np
 
 def gini_normalized(y_actual, y_pred):
@@ -24,7 +26,8 @@ def measure_error(actual, predicted):
 
 
 def prepare_data(data):
-    X, y = data[:532, 1:28], data[:532, 28]
+    # X, y = data[:532, 1:28], data[:532, 28]
+    X, y = data[:100, 0:24], data[:100, 24]
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)#, stratify=y)
 
     sc = StandardScaler()
@@ -40,13 +43,20 @@ def initial_run(data, config, models):
 
     X_train_std,X_test_std,y_train,y_test=data
 
+
+
+    print("hello")
     for c, m in zip(config, models):
-        clf = GridSearchCV(m, c, cv=3)
+        start = time.time()
+        calibrated_forest = CalibratedClassifierCV(base_estimator=m)
+        clf = GridSearchCV(calibrated_forest, c, cv=3, n_jobs=-1)
+        # clf = GridSearchCV(m, c, cv=3)
         y_train = y_train.astype('int')
         print('elo')
         clf.fit(X_train_std, y_train)
         #         print(clf.estimator)
-
+        end = time.time()
+        print(end - start)
         if (df.size < 1):
 
             df = pd.DataFrame(measure_error(y_test.tolist(), clf.predict(X_test_std).tolist()))
@@ -62,6 +72,7 @@ def initial_run(data, config, models):
             df = pd.concat([df, df1])
     df.reset_index(inplace=True)
     df.drop('index', inplace=True, axis=1)
+
     return df, list_of_models
 
 
@@ -107,14 +118,17 @@ def convert_models_toDataframe(models):
         if isinstance(v, list):
             for i in v:
                 if (df.size < 1):
-                    df = pd.DataFrame((i.get(list(i.keys())[0])).param_grid)
+                    df = pd.DataFrame.from_dict((i.get(list(i.keys())[0])).param_grid, orient='index')
+                    df = df.transpose()
                     df['model'] = list(i.keys())[0]
                 else:
-                    df2 = pd.DataFrame((i.get(list(i.keys())[0])).param_grid)
+                    df2 = pd.DataFrame.from_dict((i.get(list(i.keys())[0])).param_grid, orient='index')
+                    df2 = df2.transpose()
                     df2['model'] = str(list(i.keys())[0])
                     df = pd.concat([df, df2])
         else:
-            df = pd.DataFrame((v.get(list(v.keys())[0])).param_grid)
+            df = pd.DataFrame.from_dict((v.get(list(v.keys())[0])).param_grid, orient='index')
+            df = df.transpose()
             df['model'] = list(v.keys())[0]
         final_list.append(df)
 

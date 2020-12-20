@@ -9,7 +9,10 @@ from datetime import datetime
 from math import sqrt
 
 def prepare_data():
-    data = pd.read_csv("dfValidation.csv")
+    df = pd.read_csv("german.uci.csv")
+    # data = pd.read_csv("dfValidation.csv")
+
+
     # data = pd.read_csv("city_day.csv")
     # data['Date'] = data['Date'].apply(pd.to_datetime)
     # data.set_index('Date', inplace=True)
@@ -21,7 +24,11 @@ def prepare_data():
     #
     # df = df.fillna(df.mean())
 
-    df = data.iloc[:1000, 1:]
+
+
+    # df = data.iloc[:1000, 1:]
+
+
 
     dataset = df.values
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -29,8 +36,11 @@ def prepare_data():
     train_size = int(len(dataset) * 0.80)
     test_size = len(dataset) - train_size
     train, test = dataset[0:train_size, :], dataset[train_size:len(dataset), :]
-    train_X, train_y = train[:, 1:], train[:, 0]
-    test_X, test_y = test[:, 1:], test[:, 0]
+    # train_X, train_y = train[:, 1:], train[:, 0]
+    # test_X, test_y = test[:, 1:], test[:, 0]
+
+    train_X, train_y = train[:, 0:24], train[:, 24]
+    test_X, test_y = test[:, 0:24], test[:, 24]
     # train_X, train_y = train[:, :-1], train[:, -1]
     print(train_X)
     print(train_y)
@@ -78,7 +88,7 @@ def measure_error(actual, predicted):
             'ME': max_error(actual, predicted),
             'MAE': mean_absolute_error(actual, predicted),
             'MSE': mean_squared_error(actual, predicted),
-            'SMSE': sqrt(mean_squared_error(actual, predicted)),
+            'RMSE': sqrt(mean_squared_error(actual, predicted)),
             'MSLE': mean_squared_log_error(actual, predicted),
             'MEDAE': median_absolute_error(actual, predicted),
             'R2': r2_score(actual, predicted)}
@@ -113,16 +123,16 @@ def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
 
 def run(train_X, train_y, test_X, test_y, scaler):
     models_list = []
-    # models_list.append(lstm_model)
-    models_list.append(rnn_model)
-    # models_list.append(cnn_model)
+    models_list.append(lstm_model)
+    # models_list.append(rnn_model)
+    models_list.append(cnn_model)
     # models_list.append(mlp_model)
     # models_list.append(conv2d_model)
 
     config_list = []
-    # config_list.append(configuration('lstm', default_config()))
-    config_list.append(configuration('rnn', default_config()))
-    # config_list.append(configuration('cnn', default_config()))
+    config_list.append(configuration('lstm', default_config()))
+    # config_list.append(configuration('rnn', default_config()))
+    config_list.append(configuration('cnn', default_config()))
     # config_list.append(configuration('mlp', default_config()))
     # config_list.append(configuration('conv2d', default_config()))
 
@@ -139,6 +149,15 @@ def run(train_X, train_y, test_X, test_y, scaler):
             array_of_models.append(model)
             array_of_results.append(predictions(train_X, train_y, test_X,test_y, scaler, model, cfg))
     return array_of_models, pd.DataFrame(array_of_results)
+
+def get_min_model(result_df):
+    print(result_df.loc[result_df['RMSE'] == result_df['RMSE'].min()])
+    return result_df.loc[result_df['RMSE'] == result_df['RMSE'].min()]['Model']
+
+def get_model(list_of_models, name_of_model):
+    for m in list_of_models:
+        if m.get_config()['name']==name_of_model:
+            return m
 
 def get_config(list_of_models):
     list_of_configs = {}
