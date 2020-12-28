@@ -29,7 +29,7 @@ def measure_error(actual, predicted):
 
 def prepare_data(data):
     # X, y = data[:532, 1:28], data[:532, 28]
-    X, y = data[:60, 1:25], data[:60, 25]
+    X, y = data[:, 1:25], data[:, 25]
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)#, stratify=y)
 
     sc = StandardScaler()
@@ -50,8 +50,10 @@ def initial_run(data, config, models):
     print("hello")
     for c, m in zip(config, models):
         start = time.time()
-        calibrated_forest = CalibratedClassifierCV(base_estimator=m)
-        clf = GridSearchCV(calibrated_forest, c, cv=3, n_jobs=-1)
+        # calibrated_forest = CalibratedClassifierCV(base_estimator=m)
+        # clf = GridSearchCV(calibrated_forest, c, cv=3, n_jobs=-1)
+        clf = GridSearchCV(m, c, cv=3, n_jobs=-1)
+
         # clf = GridSearchCV(m, c, cv=3)
         y_train = y_train.astype('int')
         y_test = y_test.astype('int')

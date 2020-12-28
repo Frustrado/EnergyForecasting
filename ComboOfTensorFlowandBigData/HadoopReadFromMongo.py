@@ -44,6 +44,7 @@ print(best_model.get_config())
 
 client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
 #
-with client_hdfs.write('/home/hadoop/hdfs/best.h5') as writer:
-    best_model.save('best_model.h5')
+client_hdfs.write('/home/hadoop/hdfs/bestxd.h5', '/home/max/Desktop/EnergyForecasting/ComboOfTensorFlowandBigData/best_model.h5')
+# with client_hdfs.write('/home/hadoop/hdfs/best.h5') as writer:
+#     best_model.save('/home/hadoop/hdfs/best_model.h5')
     # dump(pickle.dumps(best_model), writer)

@@ -42,7 +42,10 @@ best_model = get_best_model(list_of_model_and_configs, find_max(df, 'as'))
 
 # df = spark.read.format("com.mongodb.spark.sql.DefaultSource").load()
 
-client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
 
-with client_hdfs.write('/home/hadoop/hdfs/bestmodeltest1.pkl') as writer:
-    dump(pickle.dumps(best_model), writer)
+######################   HADOOP   #############################
+
+# client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
+#
+# with client_hdfs.write('/home/hadoop/hdfs/bestmodeltest1.pkl') as writer:
+#     dump(pickle.dumps(best_model), writer)
