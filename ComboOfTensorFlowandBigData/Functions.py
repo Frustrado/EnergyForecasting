@@ -9,8 +9,9 @@ from datetime import datetime
 from math import sqrt
 
 def prepare_data():
-    df = pd.read_csv("german.uci.csv")
+    # df = pd.read_csv("german.uci.csv")
     # data = pd.read_csv("dfValidation.csv")
+    df = pd.read_csv("databank/data_industrial_tensor_grid_train.csv")
 
 
     # data = pd.read_csv("city_day.csv")
@@ -29,7 +30,7 @@ def prepare_data():
     # df = data.iloc[:1000, 1:]
 
 
-
+    df = df.iloc[:,1:]
     dataset = df.values
     scaler = MinMaxScaler(feature_range=(0, 1))
     dataset = scaler.fit_transform(dataset)
@@ -39,8 +40,8 @@ def prepare_data():
     # train_X, train_y = train[:, 1:], train[:, 0]
     # test_X, test_y = test[:, 1:], test[:, 0]
 
-    train_X, train_y = train[:, 0:24], train[:, 24]
-    test_X, test_y = test[:, 0:24], test[:, 24]
+    train_X, train_y = train[:, 1:], train[:, 0]
+    test_X, test_y = test[:, 1:], test[:, 0]
     # train_X, train_y = train[:, :-1], train[:, -1]
     print(train_X)
     print(train_y)
@@ -88,10 +89,10 @@ def measure_error(actual, predicted):
             'ME': max_error(actual, predicted),
             'MAE': mean_absolute_error(actual, predicted),
             'MSE': mean_squared_error(actual, predicted),
-            'RMSE': sqrt(mean_squared_error(actual, predicted)),
-            'MSLE': mean_squared_log_error(actual, predicted),
-            'MEDAE': median_absolute_error(actual, predicted),
-            'R2': r2_score(actual, predicted)}
+            'RMSE': sqrt(mean_squared_error(actual, predicted))}#,
+            # 'MSLE': mean_squared_log_error(actual, predicted),
+            # 'MEDAE': median_absolute_error(actual, predicted),
+            # 'R2': r2_score(actual, predicted)}
 
 def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
     if (model._name.split("-")[0] == 'conv2d'):

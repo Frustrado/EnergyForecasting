@@ -9,16 +9,16 @@ warnings.filterwarnings('ignore')
 
 import pickle
 from joblib import dump, load
-
-client = MongoClient('mongodb://localhost:27017/')
-
-coll = client.mgr.test1
-df = None
-for post in coll.find():
-    if df is not None:
-        df = df.append(pd.DataFrame(post).T.iloc[1:])
-    else:
-        df = pd.DataFrame(post).T.iloc[1:]
+#
+# client = MongoClient('mongodb://localhost:27017/')
+#
+# coll = client.mgr.test1
+# df = None
+# for post in coll.find():
+#     if df is not None:
+#         df = df.append(pd.DataFrame(post).T.iloc[1:])
+#     else:
+#         df = pd.DataFrame(post).T.iloc[1:]
 
 train_X, train_y, test_X, test_y, scaler = prepare_data()
 

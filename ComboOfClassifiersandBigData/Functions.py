@@ -29,7 +29,7 @@ def measure_error(actual, predicted):
 
 def prepare_data(data):
     # X, y = data[:532, 1:28], data[:532, 28]
-    X, y = data[:, 1:25], data[:, 25]
+    X, y = data[:, 2:], data[:, 1]
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)#, stratify=y)
 
     sc = StandardScaler()
