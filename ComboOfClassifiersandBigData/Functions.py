@@ -18,7 +18,7 @@ def gini_normalized(y_actual, y_pred):
 
 def measure_error(actual, predicted):
     return {'as': [accuracy_score(actual, predicted)]}
-#             'auc':[auc(actual, predicted)],
+            # 'auc':[auc(actual, predicted)]}
 #             'apc':[average_precision_score(actual, predicted)],
 #             'f1': [f1_score(actual, predicted)],
 #             'roc_auc': [roc_auc_score(actual, predicted)],

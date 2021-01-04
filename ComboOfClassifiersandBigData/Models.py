@@ -164,20 +164,143 @@ def configuration():
     #         'base_estimator__random_state': [None],
     #         'base_estimator__max_iter': [10000]}
 
-    xgbost = {'loss': ['deviance', 'exponential'],
-              'learning_rate': [0.01, 0.1],
+    # xgbost = {'loss': ['deviance', 'exponential'],
+    #           'learning_rate': [0.01, 0.1],
+    #           'n_estimators': [10],
+    #           'subsample': [0.5, 0.8, 1.0],
+    #           'criterion': ["friedman_mse", "mae"],
+    #           'min_samples_split': np.linspace(0.1, 0.5, 3),
+    #           'min_samples_leaf': np.linspace(0.1, 0.5, 3),
+    #           'min_weight_fraction_leaf': [0.0],
+    #           'max_depth': [3, 5, 8],
+    #           'min_impurity_decrease': [0.0],
+    #           'min_impurity_split': [None],
+    #           'init': [None],
+    #           'random_state': [None],
+    #           'max_features': ["log2", "sqrt"],
+    #           'verbose': [1],
+    #           'max_leaf_nodes': [None],
+    #           'warm_start': [False],
+    #           'presort': ['deprecated'],
+    #           'validation_fraction': [0.1],
+    #           'n_iter_no_change': [None],
+    #           'tol': [0.0001],
+    #           'ccp_alpha': [0.0]}
+    #
+    # svc = {'C': [0.1, 1, 10],
+    #        'kernel': ['linear', 'rbf', 'poly'],
+    #        'degree': [0, 1, 2, 3, 4, 5, 6],
+    #        'gamma': [0.1, 1, 10, 100],
+    #        'coef0': [0.0],
+    #        'shrinking': [True],
+    #        'probability': [False],
+    #        'tol': [0.001],
+    #        'cache_size': [200],
+    #        'class_weight': [None],
+    #        'verbose': [True],
+    #        'max_iter': [-1],
+    #        'decision_function_shape': ['ovr'],
+    #        'break_ties': [False],
+    #        'random_state': [None]}
+    #
+    # rf = {'n_estimators': [100,200],
+    #       'criterion': ['gini'],
+    #       'max_depth': [10, 30,None],
+    #       'min_samples_split': [2, 5, 10],
+    #       'min_samples_leaf': [1, 2, 4],
+    #       'min_weight_fraction_leaf': [0.0],
+    #       'max_features': ['auto', 'sqrt'],
+    #       'max_leaf_nodes': [None],
+    #       'min_impurity_decrease': [0.0],
+    #       'min_impurity_split': [None],
+    #       'bootstrap': [True, False],
+    #       'oob_score': [False],
+    #       'n_jobs': [None],
+    #       'random_state': [None],
+    #       'verbose': [1],
+    #       'warm_start': [False],
+    #       'class_weight': [None],
+    #       'ccp_alpha': [0.0],
+    #       'max_samples': [None]}
+    #
+    # sgd = {'loss': ["hinge", "log", "squared_hinge", "modified_huber"],
+    #        'penalty': ["l2", "l1", "none"],
+    #        'alpha': [0.0001, 0.001, 0.01, 0.1],
+    #        'l1_ratio': [0, 0.05, 0.1, 0.5, 0.8, 1],
+    #        'fit_intercept': [True],
+    #        'max_iter': [1000],
+    #        'tol': [0.001],
+    #        'shuffle': [True],
+    #        'verbose': [1],
+    #        'epsilon': [0.1],
+    #        'n_jobs': [None],
+    #        'random_state': [None],
+    #        'learning_rate': ['optimal'],
+    #        'eta0': [0.0],
+    #        'power_t': [0.5],
+    #        'early_stopping': [False],
+    #        'validation_fraction': [0.1],
+    #        'n_iter_no_change': [5],
+    #        'class_weight': [None],
+    #        'warm_start': [False],
+    #        'average': [False]}
+    #
+    # bnb = {'alpha': [0.0, 0.0001, 0.001, 0.01, 0.1, 0.5, 1.0, 2.0, 10.0],
+    #        'binarize': [0.0],
+    #        'fit_prior': [True],
+    #        'class_prior': [None]}
+    #
+    # mlp = {'hidden_layer_sizes': [(100,)],
+    #        # list(itertools.permutations([50,100,150],2)) + list(itertools.permutations([50,100,150],3)) + [50,100,150],
+    #        'activation': ['relu'],  # , 'relu'],
+    #        'solver': ['adam'],
+    #        'alpha': [0.0001],
+    #        'batch_size': ['auto'],
+    #        'learning_rate': ['constant'],  # , 'adaptive', 'invscaling'],
+    #        'learning_rate_init': [0.001],
+    #        'power_t': [0.5],
+    #        'max_iter': [200],
+    #        'shuffle': [True],
+    #        'random_state': [None],
+    #        'tol': [1e-5],
+    #        'verbose': [True],
+    #        'warm_start': [False],
+    #        'momentum': [0.9],
+    #        'nesterovs_momentum': [True],
+    #        'early_stopping': [False],
+    #        'validation_fraction': [0.1],
+    #        'beta_1': [0.9],
+    #        'beta_2': [0.999],
+    #        'epsilon': [1e-8],
+    #        'n_iter_no_change': [10],
+    #        'max_fun': [15000]}
+    #
+    # lsvc = {'penalty': ['l2'],
+    #         'loss': ['hinge'],
+    #         'dual': [True],
+    #         'tol': [0.0001],
+    #         'C': [0.01, 0.1, 1.0, 10.0],
+    #         'multi_class': ['ovr', 'crammer_singer'],
+    #         'fit_intercept': [True],
+    #         'intercept_scaling': [1],
+    #         'class_weight': [None],
+    #         'verbose': [1],
+    #         'random_state': [None],
+    #         'max_iter': [10000]}
+    xgbost = {'loss': ['deviance'],
+              'learning_rate': [0.01],
               'n_estimators': [10],
-              'subsample': [0.5, 0.8, 1.0],
+              'subsample': [1.0],
               'criterion': ["friedman_mse", "mae"],
-              'min_samples_split': np.linspace(0.1, 0.5, 3),
-              'min_samples_leaf': np.linspace(0.1, 0.5, 3),
+              'min_samples_split': [2],
+              'min_samples_leaf': [1],
               'min_weight_fraction_leaf': [0.0],
-              'max_depth': [3, 5, 8],
+              'max_depth': [3],
               'min_impurity_decrease': [0.0],
               'min_impurity_split': [None],
               'init': [None],
               'random_state': [None],
-              'max_features': ["log2", "sqrt"],
+              'max_features': [None],
               'verbose': [1],
               'max_leaf_nodes': [None],
               'warm_start': [False],
@@ -187,10 +310,10 @@ def configuration():
               'tol': [0.0001],
               'ccp_alpha': [0.0]}
 
-    svc = {'C': [0.1, 1, 10],
-           'kernel': ['linear', 'rbf', 'poly'],
-           'degree': [0, 1, 2, 3, 4, 5, 6],
-           'gamma': [0.1, 1, 10, 100],
+    svc = {'C': [1],
+           'kernel': ['rbf'],
+           'degree': [3],
+           'gamma': ['scale'],
            'coef0': [0.0],
            'shrinking': [True],
            'probability': [False],
@@ -203,13 +326,13 @@ def configuration():
            'break_ties': [False],
            'random_state': [None]}
 
-    rf = {'n_estimators': [100,200],
+    rf = {'n_estimators': [100],
           'criterion': ['gini'],
-          'max_depth': [10, 30,None],
-          'min_samples_split': [2, 5, 10],
-          'min_samples_leaf': [1, 2, 4],
+          'max_depth': [None],
+          'min_samples_split': [2],
+          'min_samples_leaf': [1],
           'min_weight_fraction_leaf': [0.0],
-          'max_features': ['auto', 'sqrt'],
+          'max_features': ['auto'],
           'max_leaf_nodes': [None],
           'min_impurity_decrease': [0.0],
           'min_impurity_split': [None],
@@ -223,10 +346,10 @@ def configuration():
           'ccp_alpha': [0.0],
           'max_samples': [None]}
 
-    sgd = {'loss': ["hinge", "log", "squared_hinge", "modified_huber"],
-           'penalty': ["l2", "l1", "none"],
-           'alpha': [0.0001, 0.001, 0.01, 0.1],
-           'l1_ratio': [0, 0.05, 0.1, 0.5, 0.8, 1],
+    sgd = {'loss': ["hinge"],
+           'penalty': ["l2"],
+           'alpha': [0.0001],
+           'l1_ratio': [0.15],
            'fit_intercept': [True],
            'max_iter': [1000],
            'tol': [0.001],
@@ -245,7 +368,7 @@ def configuration():
            'warm_start': [False],
            'average': [False]}
 
-    bnb = {'alpha': [0.0, 0.0001, 0.001, 0.01, 0.1, 0.5, 1.0, 2.0, 10.0],
+    bnb = {'alpha': [1.0],
            'binarize': [0.0],
            'fit_prior': [True],
            'class_prior': [None]}
@@ -279,8 +402,8 @@ def configuration():
             'loss': ['hinge'],
             'dual': [True],
             'tol': [0.0001],
-            'C': [0.01, 0.1, 1.0, 10.0],
-            'multi_class': ['ovr', 'crammer_singer'],
+            'C': [1.0],
+            'multi_class': ['ovr'],
             'fit_intercept': [True],
             'intercept_scaling': [1],
             'class_weight': [None],
@@ -290,7 +413,7 @@ def configuration():
 
     sc = {}
 
-    array_of_configs.append(svc)
+    # array_of_configs.append(svc)
     array_of_configs.append(xgbost)
     array_of_configs.append(rf)
     array_of_configs.append(sgd)
@@ -308,13 +431,13 @@ def models():
 
 
     array_of_models = []
-    array_of_models.append(SVC().set_params(**array_of_configs[0]))
-    array_of_models.append(GradientBoostingClassifier().set_params(**array_of_configs[1]))
-    array_of_models.append(RandomForestClassifier().set_params(**array_of_configs[2]))
-    array_of_models.append(SGDClassifier().set_params(**array_of_configs[3]))
-    array_of_models.append(BernoulliNB().set_params(**array_of_configs[4]))
-    array_of_models.append(MLPClassifier().set_params(**array_of_configs[5]))
-    array_of_models.append(LinearSVC().set_params(**array_of_configs[6]))
+    # array_of_models.append(SVC().set_params(**array_of_configs[0]))
+    array_of_models.append(GradientBoostingClassifier().set_params(**array_of_configs[0]))
+    array_of_models.append(RandomForestClassifier().set_params(**array_of_configs[1]))
+    array_of_models.append(SGDClassifier().set_params(**array_of_configs[2]))
+    array_of_models.append(BernoulliNB().set_params(**array_of_configs[3]))
+    array_of_models.append(MLPClassifier().set_params(**array_of_configs[4]))
+    array_of_models.append(LinearSVC().set_params(**array_of_configs[5]))
     #     array_of_models.append(StackingClassifier().set_params(**array_of_configs[7]))
 
     return array_of_models
@@ -448,7 +571,7 @@ def initialConfig():
             'random_state': None,
             'max_iter': 1000}
 
-    array_of_configs.append(svc)
+    # array_of_configs.append(svc)
     array_of_configs.append(xgbost)
     array_of_configs.append(rf)
     array_of_configs.append(sgd)

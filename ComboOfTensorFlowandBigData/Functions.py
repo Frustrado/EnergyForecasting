@@ -11,7 +11,7 @@ from math import sqrt
 def prepare_data():
     # df = pd.read_csv("german.uci.csv")
     # data = pd.read_csv("dfValidation.csv")
-    df = pd.read_csv("databank/data_industrial_tensor_grid_train.csv")
+    df = pd.read_csv("databank/data_industrial_tensor_pv_roof_train.csv")
 
 
     # data = pd.read_csv("city_day.csv")
@@ -125,16 +125,16 @@ def predictions(train_X, train_y, test_X, test_y,scaler,model,cfg):
 def run(train_X, train_y, test_X, test_y, scaler):
     models_list = []
     models_list.append(lstm_model)
-    # models_list.append(rnn_model)
-    # models_list.append(cnn_model)
-    # models_list.append(mlp_model)
+    models_list.append(rnn_model)
+    models_list.append(cnn_model)
+    models_list.append(mlp_model)
     # models_list.append(conv2d_model)
 
     config_list = []
     config_list.append(configuration('lstm', default_config()))
-    # config_list.append(configuration('rnn', default_config()))
-    # config_list.append(configuration('cnn', default_config()))
-    # config_list.append(configuration('mlp', default_config()))
+    config_list.append(configuration('rnn', default_config()))
+    config_list.append(configuration('cnn', default_config()))
+    config_list.append(configuration('mlp', default_config()))
     # config_list.append(configuration('conv2d', default_config()))
 
     array_of_results = []

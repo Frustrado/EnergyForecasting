@@ -30,6 +30,7 @@ df, list_of_model_and_configs = initial_run(data, configuration(), models())
 # df, list_of_model_and_configs = add_model(data, df, SVC(), {'kernel': ['linear'],
 #                                                             'C': [0.025]}, list_of_model_and_configs)
 print(df)
+df.to_csv('resultfacade.csv')
 # best_model = get_best_model(list_of_model_and_configs, find_max(df, 'as'))
 
 # testDataFrame = convert_models_toDataframe(list_of_model_and_configs)
@@ -40,7 +41,9 @@ print(df)
 client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
 #
 for key, model in list_of_model_and_configs.items():
-    path = '/home/hadoop/hdfs/test/xyz' + str(key) + '.pkl'
+    path = '/home/hadoop/hdfs/test/defaultparam' + str(key) + '.pkl'
     with client_hdfs.write(path) as writer:
         dump(model, writer)
         # dump(pickle.dumps(model), writer)
+
+
