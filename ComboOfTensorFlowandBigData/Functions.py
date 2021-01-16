@@ -11,7 +11,9 @@ from math import sqrt
 def prepare_data():
     # df = pd.read_csv("german.uci.csv")
     # data = pd.read_csv("dfValidation.csv")
-    df = pd.read_csv("databank/data_industrial_tensor_pv_roof_train.csv")
+    df = pd.read_csv("databank/data_industrial_tensor_grid_train.csv")
+    df_test = pd.read_csv("databank/data_industrial_tensor_grid_test.csv")
+
 
 
     # data = pd.read_csv("city_day.csv")
@@ -30,7 +32,7 @@ def prepare_data():
     # df = data.iloc[:1000, 1:]
 
 
-    df = df.iloc[:,1:]
+    df = df.iloc[:200,1:]
     dataset = df.values
     scaler = MinMaxScaler(feature_range=(0, 1))
     dataset = scaler.fit_transform(dataset)

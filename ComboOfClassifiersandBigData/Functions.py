@@ -6,10 +6,8 @@ import pandas as pd
 from datetime import datetime
 
 from sklearn.metrics import accuracy_score, f1_score, auc, average_precision_score, roc_auc_score,roc_curve
-from sklearn.preprocessing import StandardScaler
 import time
 import numpy as np
-
 
 
 def gini_normalized(y_actual, y_pred):
@@ -17,34 +15,39 @@ def gini_normalized(y_actual, y_pred):
     return gini(y_actual, y_pred) / gini(y_actual, y_actual)
 
 def measure_error(actual, predicted):
-    return {'as': [accuracy_score(actual, predicted)]}
+    return {'as': [accuracy_score(actual, predicted)],
             # 'auc':[auc(actual, predicted)]}
 #             'apc':[average_precision_score(actual, predicted)],
-#             'f1': [f1_score(actual, predicted)],
+            'f1': [f1_score(actual, predicted)]}
 #             'roc_auc': [roc_auc_score(actual, predicted)],
 #             'roc_cur': [roc_curve(actual, predicted)],#moze sie przez to wywalic
 #             'gini': [gini_normalized(actual, predicted)]}
 
 
 
-def prepare_data(data):
+def prepare_data(data, scaler):
     # X, y = data[:532, 1:28], data[:532, 28]
     X, y = data[:, 2:], data[:, 1]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)#, stratify=y)
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)#, stratify=y)
+    #
+    # sc = StandardScaler()
+    # sc.fit(X_train)
+    # X_train_std = sc.transform(X_train)
+    # X_test_std = sc.transform(X_test)
 
-    sc = StandardScaler()
-    sc.fit(X_train)
-    X_train_std = sc.transform(X_train)
-    X_test_std = sc.transform(X_test)
+    # return [X_train_std,X_test_std,y_train, y_test]
 
-    return [X_train_std,X_test_std,y_train, y_test]
+    X_std = scaler.transform(X)
+    return X_std,y
 
-def initial_run(data, config, models):
+def initial_run(data, data_test, config, models):
     df = pd.DataFrame()
     list_of_models = {}
 
-    X_train_std,X_test_std,y_train,y_test=data
+    # X_train_std,X_test_std,y_train,y_test=data
 
+    X_train_std,y_train=data
+    X_test_std, y_test = data_test
 
 
     print("hello")
@@ -66,6 +69,7 @@ def initial_run(data, config, models):
 
             df = pd.DataFrame(measure_error(y_test.tolist(), clf.predict(X_test_std).tolist()))
             # df = pd.DataFrame(measure_error(y_test, clf.predict(X_test_std)))
+            m = str(m).split('(')[0]
             df['model'] = str(m) + "-" + str(1)
             list_of_models[str(m) + "-" + str(1)] = clf.best_estimator_
             df['date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

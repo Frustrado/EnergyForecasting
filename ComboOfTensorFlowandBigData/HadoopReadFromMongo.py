@@ -31,7 +31,7 @@ models, df_results = run(train_X, train_y, test_X, test_y, scaler)
 # df, list_of_model_and_configs = add_model(data, df, SVC(), {'kernel': ['linear'],
 #                                                             'C': [0.025]}, list_of_model_and_configs)
 print(df_results)
-df_results.to_csv('result10epochsroof.csv')
+df_results.to_csv('dramat.csv')
 # best_model = get_model(models, get_min_model(df_results).values[0])
 # print(best_model.get_config())
 
@@ -39,15 +39,15 @@ df_results.to_csv('result10epochsroof.csv')
 
 ######################   HADOOP   #############################
 
-client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
+# client_hdfs = InsecureClient('http://localhost:9870', user='hadoop')
 #tf -3 epoki, tf50epochs - 10 epok   ,  df = pd.read_csv("databank/data_industrial_tensor_grid_train.csv")
 #tf10epochsfacade - 10epok,       df = pd.read_csv("databank/data_industrial_tensor_pv_facade_train.csv")
 #tf10epochsroof - 10epok     df = pd.read_csv("databank/data_industrial_tensor_pv_roof_train.csv")
 for model in models:
-    path = '/home/hadoop/hdfs/test/tf10epochsroof' + str(model._name)
+    # path = '/home/hadoop/hdfs/test/tf10epochsroof' + str(model._name)
     pathLoc = '/home/max/Desktop/EnergyForecasting/ComboOfTensorFlowandBigData/models/' + str(model._name)
     model.save(pathLoc,save_format='tf')
-    client_hdfs.write(path,pathLoc)
+    # client_hdfs.write(path,pathLoc)
 
 
 

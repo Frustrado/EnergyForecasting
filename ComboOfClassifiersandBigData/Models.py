@@ -2,7 +2,7 @@
 from sklearn.svm import SVC
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import SGDClassifier#lsvc
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import LinearSVC
@@ -10,6 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import StackingClassifier
 import numpy as np
 import itertools
+from xgboost import XGBClassifier
 
 
 
@@ -287,28 +288,40 @@ def configuration():
     #         'verbose': [1],
     #         'random_state': [None],
     #         'max_iter': [10000]}
-    xgbost = {'loss': ['deviance'],
-              'learning_rate': [0.01],
-              'n_estimators': [10],
-              'subsample': [1.0],
-              'criterion': ["friedman_mse", "mae"],
-              'min_samples_split': [2],
-              'min_samples_leaf': [1],
-              'min_weight_fraction_leaf': [0.0],
-              'max_depth': [3],
-              'min_impurity_decrease': [0.0],
-              'min_impurity_split': [None],
-              'init': [None],
-              'random_state': [None],
-              'max_features': [None],
-              'verbose': [1],
-              'max_leaf_nodes': [None],
-              'warm_start': [False],
-              'presort': ['deprecated'],
-              'validation_fraction': [0.1],
-              'n_iter_no_change': [None],
-              'tol': [0.0001],
-              'ccp_alpha': [0.0]}
+    # xgbost = {'loss': ['deviance'],
+    #           'learning_rate': [0.01],
+    #           'n_estimators': [10],
+    #           'subsample': [1.0],
+    #           'criterion': ["friedman_mse", "mae"],
+    #           'min_samples_split': [2],
+    #           'min_samples_leaf': [1],
+    #           'min_weight_fraction_leaf': [0.0],
+    #           'max_depth': [3],
+    #           'min_impurity_decrease': [0.0],
+    #           'min_impurity_split': [None],
+    #           'init': [None],
+    #           'random_state': [None],
+    #           'max_features': [None],
+    #           'verbose': [1],
+    #           'max_leaf_nodes': [None],
+    #           'warm_start': [False],
+    #           'presort': ['deprecated'],
+    #           'validation_fraction': [0.1],
+    #           'n_iter_no_change': [None],
+    #           'tol': [0.0001],
+    #           'ccp_alpha': [0.0]}
+
+    xgboost = {'nthread': [-1],
+               'booster': ['gbtree'],
+               'verbosity':[2],
+               'learning_rate': [0.05],  # so called `eta` value
+               'max_depth': [15],
+               'min_child_weight': [0.5],
+               'silent': [True],
+               'subsample': [0.8],
+               'colsample_bytree': [1.0],
+               'n_estimators': [100]  # number of trees, change it to 1000 for better results
+                }
 
     svc = {'C': [1],
            'kernel': ['rbf'],
@@ -326,17 +339,17 @@ def configuration():
            'break_ties': [False],
            'random_state': [None]}
 
-    rf = {'n_estimators': [100],
+    rf = {'n_estimators': [100,150],
           'criterion': ['gini'],
-          'max_depth': [None],
+          'max_depth': [35],
           'min_samples_split': [2],
           'min_samples_leaf': [1],
           'min_weight_fraction_leaf': [0.0],
           'max_features': ['auto'],
-          'max_leaf_nodes': [None],
+          'max_leaf_nodes': [10],
           'min_impurity_decrease': [0.0],
           'min_impurity_split': [None],
-          'bootstrap': [True, False],
+          'bootstrap': [True],
           'oob_score': [False],
           'n_jobs': [None],
           'random_state': [None],
@@ -348,10 +361,10 @@ def configuration():
 
     sgd = {'loss': ["hinge"],
            'penalty': ["l2"],
-           'alpha': [0.0001],
+           'alpha': [0.0001, 0.001],
            'l1_ratio': [0.15],
            'fit_intercept': [True],
-           'max_iter': [1000],
+           'max_iter': [50, 100],
            'tol': [0.001],
            'shuffle': [True],
            'verbose': [1],
@@ -368,16 +381,16 @@ def configuration():
            'warm_start': [False],
            'average': [False]}
 
-    bnb = {'alpha': [1.0],
+    bnb = {'alpha': [0.001,0.005],
            'binarize': [0.0],
            'fit_prior': [True],
            'class_prior': [None]}
 
-    mlp = {'hidden_layer_sizes': [(100,)],
+    mlp = {'hidden_layer_sizes': [50,150,100],#[(50,50),(100,50)],
            # list(itertools.permutations([50,100,150],2)) + list(itertools.permutations([50,100,150],3)) + [50,100,150],
            'activation': ['relu'],  # , 'relu'],
            'solver': ['adam'],
-           'alpha': [0.0001],
+           'alpha': [0.0005],
            'batch_size': ['auto'],
            'learning_rate': ['constant'],  # , 'adaptive', 'invscaling'],
            'learning_rate_init': [0.001],
@@ -385,7 +398,7 @@ def configuration():
            'max_iter': [200],
            'shuffle': [True],
            'random_state': [None],
-           'tol': [1e-5],
+           'tol': [1e-6],
            'verbose': [True],
            'warm_start': [False],
            'momentum': [0.9],
@@ -414,12 +427,14 @@ def configuration():
     sc = {}
 
     # array_of_configs.append(svc)
-    array_of_configs.append(xgbost)
+
+    array_of_configs.append(xgboost)
     array_of_configs.append(rf)
     array_of_configs.append(sgd)
     array_of_configs.append(bnb)
     array_of_configs.append(mlp)
-    array_of_configs.append(lsvc)
+
+    # array_of_configs.append(lsvc)
     #     array_of_configs.append(sc)
 
     return array_of_configs
@@ -430,15 +445,25 @@ def models():
 
 
 
+    # array_of_models = []
+    # array_of_models.append(XGBClassifier().set_params(**array_of_configs[0]))
+    # # array_of_models.append(SVC().set_params(**array_of_configs[0]))
+    # # array_of_models.append(GradientBoostingClassifier().set_params(**array_of_configs[0]))
+    #
+    # array_of_models.append(RandomForestClassifier().set_params(**array_of_configs[1]))
+    # # array_of_models.append(SGDClassifier().set_params(**array_of_configs[2]))
+    # # array_of_models.append(BernoulliNB().set_params(**array_of_configs[3]))
+    # # array_of_models.append(MLPClassifier().set_params(**array_of_configs[4]))
+    #
+    # # array_of_models.append(LinearSVC().set_params(**array_of_configs[5]))
+    # #     array_of_models.append(StackingClassifier().set_params(**array_of_configs[7]))
+
     array_of_models = []
-    # array_of_models.append(SVC().set_params(**array_of_configs[0]))
-    array_of_models.append(GradientBoostingClassifier().set_params(**array_of_configs[0]))
-    array_of_models.append(RandomForestClassifier().set_params(**array_of_configs[1]))
-    array_of_models.append(SGDClassifier().set_params(**array_of_configs[2]))
-    array_of_models.append(BernoulliNB().set_params(**array_of_configs[3]))
-    array_of_models.append(MLPClassifier().set_params(**array_of_configs[4]))
-    array_of_models.append(LinearSVC().set_params(**array_of_configs[5]))
-    #     array_of_models.append(StackingClassifier().set_params(**array_of_configs[7]))
+    array_of_models.append(XGBClassifier())
+    array_of_models.append(RandomForestClassifier())
+    array_of_models.append(SGDClassifier())
+    array_of_models.append(BernoulliNB())
+    array_of_models.append(MLPClassifier())
 
     return array_of_models
 
@@ -571,12 +596,27 @@ def initialConfig():
             'random_state': None,
             'max_iter': 1000}
 
+    xgboost = {'nthread': -1,
+               'booster': 'gbtree',
+               'verbosity': 2,
+               'learning_rate': 0.05,  # so called `eta` value
+               'max_depth': 30,
+               'min_child_weight': 1,
+               'silent': True,
+               'subsample': 0.8,
+               'colsample_bytree': 0.7,
+               'n_estimators': 100  # number of trees, change it to 1000 for better results
+               }
+
     # array_of_configs.append(svc)
-    array_of_configs.append(xgbost)
-    array_of_configs.append(rf)
-    array_of_configs.append(sgd)
-    array_of_configs.append(bnb)
-    array_of_configs.append(mlp)
-    array_of_configs.append(lsvc)
+
+    # array_of_configs.append(xgboost)
+    # array_of_configs.append(xgbost)
+    # array_of_configs.append(rf)
+    # array_of_configs.append(sgd)
+    # array_of_configs.append(bnb)
+    # array_of_configs.append(mlp)
+
+    # array_of_configs.append(lsvc)
 
     return array_of_configs
